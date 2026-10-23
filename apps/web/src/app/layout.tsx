@@ -1,5 +1,10 @@
 import type { Metadata, Viewport } from 'next';
+import { Press_Start_2P, VT323 } from 'next/font/google';
 import './globals.css';
+
+// Fontes pixel com licença OFL.
+const pixel = Press_Start_2P({ weight: '400', subsets: ['latin'], variable: '--font-pixel' });
+const body = VT323({ weight: '400', subsets: ['latin'], variable: '--font-body' });
 
 export const metadata: Metadata = {
   title: 'Linha de Frente',
@@ -14,8 +19,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="pt-BR" className="h-full antialiased">
-      <body className="flex min-h-full flex-col">{children}</body>
+    <html lang="pt-BR" className={`${pixel.variable} ${body.variable} h-full antialiased`}>
+      <body className="flex min-h-dvh flex-col">{children}</body>
     </html>
   );
 }

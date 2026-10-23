@@ -9,6 +9,7 @@ apps/
   web/        # Next.js (App Router) + Tailwind — deploy na Vercel
 packages/
   engine/     # motor de regras em TypeScript puro (sem dependências), 100% testado
+  ai/         # bots; recebem só o PlayerView (Recruta pronto)
 ```
 
 ## Desenvolvimento
@@ -46,6 +47,13 @@ Decisões de regra que a especificação deixava em aberto:
 - **Sem peças móveis:** verificado logo após cada jogada; se os dois lados ficam sem peças móveis ao mesmo tempo, é empate (`winner: null`).
 - **Sem jogadas legais:** verificado no início da vez (inclusive a primeira); quem não tem jogada perde.
 - **View:** durante o posicionamento as peças inimigas não aparecem; ao fim da partida tudo é revelado.
+
+## Jogo (`apps/web`)
+
+- `/` — menu (dificuldade da IA; online ainda desabilitado).
+- `/jogo` — posicionamento (manual, aleatório, inteligente e formações salvas no navegador) e partida até o fim.
+- A partida local fica salva no `localStorage` (sobrevive a recarregar a página). O estado completo faz o papel do servidor; a tela e a IA só usam `getPlayerView`.
+- As peças ainda são provisórias (geradas por código), à espera dos sprites da fase 5.
 
 ## Deploy (Vercel)
 

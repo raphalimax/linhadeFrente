@@ -4,3 +4,4 @@ node_modules
 coverage
 SPEC.md
 next-env.d.ts
+.claude

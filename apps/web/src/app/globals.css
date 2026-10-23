@@ -2,12 +2,15 @@
 
 :root {
   --background: #1f2a1a;
-  --foreground: #e8e4c9;
+  --foreground: #ece6c4;
   --grass: #4a6b2f;
   --grass-alt: #557a36;
   --lake: #2f5f8a;
-  --army-red: #a33a2c;
-  --army-blue: #2c5aa3;
+  --army-red: #b0402f;
+  --army-red-dark: #6e2219;
+  --army-blue: #2f5fb0;
+  --army-blue-dark: #19356e;
+  --panel: #3a3a26;
 }
 
 @theme inline {
@@ -17,15 +20,100 @@
   --color-grass-alt: var(--grass-alt);
   --color-lake: var(--lake);
   --color-army-red: var(--army-red);
+  --color-army-red-dark: var(--army-red-dark);
   --color-army-blue: var(--army-blue);
+  --color-army-blue-dark: var(--army-blue-dark);
+  --font-pixel: var(--font-pixel), monospace;
+  --font-body: var(--font-body), monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: ui-monospace, 'Courier New', monospace;
+  font-family: var(--font-body), ui-monospace, monospace;
+  font-size: 1.15rem;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.pixelated {
+.font-pixel {
+  font-family: var(--font-pixel), monospace;
+}
+
+.pixelated,
+.pixelated img {
   image-rendering: pixelated;
+}
+
+/* Retrato: tabuleiro em cima, painel embaixo. Paisagem: painel na lateral. */
+.game-layout {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+}
+
+.board-size {
+  width: min(calc(100vw - 1.5rem), calc(100dvh - 9rem), 720px);
+}
+
+@media (orientation: landscape) {
+  .game-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .board-size {
+    width: min(calc(100dvh - 1.5rem), calc(100vw - 21rem), 820px);
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 720px;
+  padding: 0.75rem;
+  background: var(--panel);
+  border: 4px solid rgba(0, 0, 0, 0.6);
+}
+
+@media (orientation: landscape) {
+  .game-layout > .panel {
+    width: 19rem;
+    align-self: stretch;
+    max-height: calc(100dvh - 1.5rem);
+    overflow-y: auto;
+  }
+}
+
+.btn {
+  padding: 0.35rem 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  background: #5a5a3c;
+  border: 3px solid #000;
+  box-shadow:
+    inset -3px -3px 0 rgba(0, 0, 0, 0.35),
+    inset 3px 3px 0 rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+.btn:active:not(:disabled) {
+  box-shadow: inset 3px 3px 0 rgba(0, 0, 0, 0.35);
+}
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn-primary {
+  background: #8a6d1f;
+  color: #fff7d6;
+}
+.btn-danger {
+  background: var(--army-red);
 }
