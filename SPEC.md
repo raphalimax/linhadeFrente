@@ -112,7 +112,7 @@ Toda IA recebe `PlayerView` + histórico público. Ela mantém um modelo de cren
 - Começar com placeholders gerados por código: quadrado na cor do exército + número da força + ícone simples.
 - Contrato para a arte final, para que trocar seja só soltar arquivos:
   - Sprites de 32x32 px, PNG com transparência, escalados com nearest-neighbor.
-  - `apps/web/public/sprites/{red|blue}/{agente,soldado,cabo,sargento,subtenente,tenente,capitao,major,coronel,general,prisioneiro,mina,verso}.png`
+  - `apps/web/public/sprites/{verde|azul}/{agente,soldado,cabo,sargento,subtenente,tenente,capitao,major,coronel,general,prisioneiro,mina,verso}.png`
   - Terreno: `public/sprites/tiles/{grama,lago,borda}.png`
   - Fonte pixel com licença OFL.
 

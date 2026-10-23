@@ -53,7 +53,7 @@ Decisões de regra que a especificação deixava em aberto:
 - `/` — menu (dificuldade da IA; online ainda desabilitado).
 - `/jogo` — posicionamento (manual, aleatório, inteligente e formações salvas no navegador) e partida até o fim.
 - A partida local fica salva no `localStorage` (sobrevive a recarregar a página). O estado completo faz o papel do servidor; a tela e a IA só usam `getPlayerView`.
-- As peças ainda são provisórias (geradas por código), à espera dos sprites da fase 5.
+- Sprites 32×32 em `apps/web/public/sprites/{verde|azul}/{patente}.png` (A = verde, B = azul). Para trocar a arte, basta substituir o arquivo com o mesmo nome. Provisórios: `subtenente.png` é cópia do sargento e o verso (peça oculta) e o terreno são desenhados em CSS.
 
 ## Deploy (Vercel)
 

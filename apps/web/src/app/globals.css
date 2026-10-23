@@ -6,10 +6,13 @@
   --grass: #4a6b2f;
   --grass-alt: #557a36;
   --lake: #2f5f8a;
-  --army-red: #b0402f;
-  --army-red-dark: #6e2219;
-  --army-blue: #2f5fb0;
-  --army-blue-dark: #19356e;
+  /* Exército A (verde) e B (azul), combinando com os sprites. */
+  --army-a: #6f8a2c;
+  --army-a-dark: #2f3d12;
+  --army-b: #3a64b8;
+  --army-b-dark: #172d5c;
+  --tile: #d8cc9c;
+  --danger: #b0402f;
   --panel: #3a3a26;
 }
 
@@ -19,10 +22,11 @@
   --color-grass: var(--grass);
   --color-grass-alt: var(--grass-alt);
   --color-lake: var(--lake);
-  --color-army-red: var(--army-red);
-  --color-army-red-dark: var(--army-red-dark);
-  --color-army-blue: var(--army-blue);
-  --color-army-blue-dark: var(--army-blue-dark);
+  --color-army-a: var(--army-a);
+  --color-army-a-dark: var(--army-a-dark);
+  --color-army-b: var(--army-b);
+  --color-army-b-dark: var(--army-b-dark);
+  --color-tile: var(--tile);
   --font-pixel: var(--font-pixel), monospace;
   --font-body: var(--font-body), monospace;
 }
@@ -115,5 +119,5 @@ body {
   color: #fff7d6;
 }
 .btn-danger {
-  background: var(--army-red);
+  background: var(--danger);
 }

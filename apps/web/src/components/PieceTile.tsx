@@ -1,6 +1,6 @@
 import { RANK_INFO, type Player, type Rank } from '@ldf/engine';
 
-/** Abreviações das patentes para as peças provisórias. */
+/** Abreviações das patentes (painéis e leitores de tela). */
 const SHORT: Record<Rank, string> = {
   agente: 'AGT',
   soldado: 'SLD',
@@ -16,19 +16,25 @@ const SHORT: Record<Rank, string> = {
   mina: 'MIN',
 };
 
-const SYMBOL: Partial<Record<Rank, string>> = { mina: '✹', prisioneiro: '⚑' };
-
-export function rankGlyph(rank: Rank): string {
-  return SYMBOL[rank] ?? String(RANK_INFO[rank].strength);
-}
-
 export function rankShort(rank: Rank): string {
   return SHORT[rank];
 }
 
-const ARMY_BG: Record<Player, string> = {
-  A: 'bg-army-red border-army-red-dark',
-  B: 'bg-army-blue border-army-blue-dark',
+/** Pasta dos sprites de cada exército: `public/sprites/{verde|azul}/{patente}.png`. */
+export const ARMY_FOLDER: Record<Player, 'verde' | 'azul'> = { A: 'verde', B: 'azul' };
+
+export function spriteUrl(owner: Player, rank: Rank): string {
+  return `/sprites/${ARMY_FOLDER[owner]}/${rank}.png`;
+}
+
+const ARMY_STYLE: Record<Player, string> = {
+  A: 'border-army-a bg-tile/90',
+  B: 'border-army-b bg-tile/90',
+};
+
+const VERSO_STYLE: Record<Player, string> = {
+  A: 'border-army-a-dark bg-army-a',
+  B: 'border-army-b-dark bg-army-b',
 };
 
 interface PieceTileProps {
@@ -41,31 +47,38 @@ interface PieceTileProps {
 }
 
 /**
- * Peça provisória gerada por código: quadrado na cor do exército, força e
- * abreviação. Será trocada pelos sprites de `public/sprites` na fase 5.
+ * Peça: sprite 32×32 ampliado sem suavização, com a força num selo (o nome da
+ * patente fica a cargo da interface). Peça oculta mostra o verso, desenhado em CSS.
  */
 export function PieceTile({ owner, rank, revealed, dimmed }: PieceTileProps) {
+  const strength = rank ? RANK_INFO[rank].strength : null;
   return (
     <div
-      className={`relative flex h-full w-full flex-col items-center justify-center border-2 leading-none text-white shadow-[inset_-2px_-2px_0_rgba(0,0,0,0.35),inset_2px_2px_0_rgba(255,255,255,0.2)] ${ARMY_BG[owner]} ${dimmed ? 'opacity-50' : ''}`}
+      className={`@container relative h-full w-full border-2 ${rank ? ARMY_STYLE[owner] : VERSO_STYLE[owner]} shadow-[inset_-2px_-2px_0_rgba(0,0,0,0.3),inset_2px_2px_0_rgba(255,255,255,0.15)] ${dimmed ? 'opacity-40 grayscale' : ''}`}
+      title={rank ? RANK_INFO[rank].label : 'Peça oculta'}
     >
       {rank ? (
         <>
-          <span className="font-pixel text-[min(3.2vw,1.1rem)] landscape:text-[min(2.6vh,1.1rem)]">
-            {rankGlyph(rank)}
-          </span>
-          <span className="mt-[2px] text-[min(2.6vw,0.85rem)] tracking-tight opacity-90 landscape:text-[min(2vh,0.85rem)]">
-            {SHORT[rank]}
-          </span>
+          <div
+            className="pixelated absolute inset-0 bg-contain bg-center bg-no-repeat"
+            style={{ backgroundImage: `url(${spriteUrl(owner, rank)})` }}
+            role="img"
+            aria-label={RANK_INFO[rank].label}
+          />
+          {strength !== null && (
+            <span className="font-pixel absolute top-0 left-0 bg-black/75 px-[5cqw] py-[4cqw] text-[28cqw] leading-none text-yellow-100">
+              {strength}
+            </span>
+          )}
         </>
       ) : (
-        <span className="font-pixel text-[min(3vw,1rem)] opacity-60 landscape:text-[min(2.4vh,1rem)]">
+        <span className="font-pixel absolute inset-0 flex items-center justify-center text-[38cqw] text-white/45">
           ★
         </span>
       )}
       {revealed && (
         <span
-          className="absolute top-0 right-0 h-0 w-0 border-t-[7px] border-l-[7px] border-t-yellow-300 border-l-transparent"
+          className="absolute top-0 right-0 h-0 w-0 border-t-[22cqw] border-l-[22cqw] border-t-yellow-300 border-l-transparent"
           aria-label="revelada"
         />
       )}
