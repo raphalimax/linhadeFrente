@@ -111,9 +111,9 @@ Toda IA recebe `PlayerView` + histórico público. Ela mantém um modelo de cren
 ## Assets (pixel art)
 - Começar com placeholders gerados por código: quadrado na cor do exército + número da força + ícone simples.
 - Contrato para a arte final, para que trocar seja só soltar arquivos:
-  - Sprites de 32x32 px, PNG com transparência, escalados com nearest-neighbor.
+  - Sprites de 64x64 px (desenhados numa grade de pixel art), PNG com transparência; nítidos (nearest-neighbor) quando ampliados.
   - `apps/web/public/sprites/{verde|azul}/{agente,soldado,cabo,sargento,subtenente,tenente,capitao,major,coronel,general,prisioneiro,mina,verso}.png`
-  - Terreno: `public/sprites/tiles/{grama,lago,borda}.png`
+  - Terreno: `public/sprites/tiles/{grama,grama2,lago,borda,madeira}.png` (texturas; `borda` = sacos de areia da moldura, `madeira` = laterais)
   - Fonte pixel com licença OFL.
 
 ## Fases de implementação

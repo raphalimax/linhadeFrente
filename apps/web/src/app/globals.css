@@ -43,9 +43,57 @@ body {
   font-family: var(--font-pixel), monospace;
 }
 
-.pixelated,
-.pixelated img {
-  image-rendering: pixelated;
+/* Sprites 64x64: suavizados quando reduzidos (celular), nítidos quando ampliados. */
+.sprite {
+  image-rendering: auto;
+}
+@media (min-width: 1000px) and (min-height: 760px) {
+  .sprite {
+    image-rendering: pixelated;
+  }
+}
+
+/* Terreno (public/sprites/tiles). */
+.tile-grama,
+.tile-grama2,
+.tile-lago {
+  background-size: cover;
+  background-position: center;
+}
+.tile-grama {
+  background-image: url('/sprites/tiles/grama.png');
+}
+.tile-grama2 {
+  background-image: url('/sprites/tiles/grama2.png');
+}
+.tile-lago {
+  background-image: url('/sprites/tiles/lago.png');
+}
+
+/* Moldura do tabuleiro: sacos de areia em cima e embaixo, madeira nas laterais. */
+.board-frame {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 4%;
+  background: url('/sprites/tiles/madeira.png') center / 30% repeat;
+  border: 3px solid #000;
+}
+.board-frame::before,
+.board-frame::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4%;
+  background: url('/sprites/tiles/borda.png') left / auto 100% repeat-x;
+  pointer-events: none;
+}
+.board-frame::before {
+  top: 0;
+}
+.board-frame::after {
+  bottom: 0;
+  transform: scaleY(-1);
 }
 
 /* Retrato: tabuleiro em cima, painel embaixo. Paisagem: painel na lateral. */
