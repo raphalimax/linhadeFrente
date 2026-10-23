@@ -1,29 +1,40 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSettings } from '@/store/settings';
+import { useSettings, useSettingsHydrated } from '@/store/settings';
 
-/** Liga/desliga o som (e a vibração). */
+/** Botões de som (efeitos + vibração) e de música de fundo. */
 export function MuteButton() {
+  const hydrated = useSettingsHydrated();
   const muted = useSettings((s) => s.muted);
-  const toggle = useSettings((s) => s.toggleMuted);
-  const [mounted, setMounted] = useState(false);
+  const music = useSettings((s) => s.music);
+  const toggleMuted = useSettings((s) => s.toggleMuted);
+  const toggleMusic = useSettings((s) => s.toggleMusic);
 
-  useEffect(() => {
-    void Promise.resolve(useSettings.persist?.rehydrate()).then(() => setMounted(true));
-  }, []);
-
-  const label = muted ? 'Ligar som' : 'Desligar som';
+  const soundLabel = muted ? 'Ligar som' : 'Desligar som';
+  const musicLabel = music ? 'Desligar música' : 'Ligar música';
   return (
-    <button
-      type="button"
-      className="btn px-2 py-0 text-xl"
-      onClick={toggle}
-      aria-label={label}
-      title={label}
-      aria-pressed={!muted}
-    >
-      {!mounted ? '…' : muted ? '🔇' : '🔊'}
-    </button>
+    <div className="flex gap-1">
+      <button
+        type="button"
+        className="btn px-2 py-0 text-xl"
+        onClick={toggleMuted}
+        aria-label={soundLabel}
+        title={soundLabel}
+        aria-pressed={!muted}
+      >
+        {!hydrated ? '…' : muted ? '🔇' : '🔊'}
+      </button>
+      <button
+        type="button"
+        className={`btn px-2 py-0 text-xl ${hydrated && (!music || muted) ? 'line-through opacity-50' : ''}`}
+        onClick={toggleMusic}
+        disabled={muted}
+        aria-label={musicLabel}
+        title={musicLabel}
+        aria-pressed={music}
+      >
+        ♫
+      </button>
+    </div>
   );
 }

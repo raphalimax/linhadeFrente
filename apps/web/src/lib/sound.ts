@@ -1,23 +1,16 @@
 'use client';
 
 import { useSettings } from '@/store/settings';
+import { runningContext } from './audio';
 
 /**
  * Efeitos sonoros sintetizados com Web Audio (estilo 8 bits), sem arquivos.
  * Tudo é silencioso se o jogador desligou o som ou o navegador não suporta.
  */
 
-let ctx: AudioContext | null = null;
-
 function audio(): AudioContext | null {
-  if (typeof window === 'undefined' || useSettings.getState().muted) return null;
-  try {
-    ctx ??= new AudioContext();
-    if (ctx.state === 'suspended') void ctx.resume();
-    return ctx;
-  } catch {
-    return null;
-  }
+  if (useSettings.getState().muted) return null;
+  return runningContext();
 }
 
 interface ToneOptions {

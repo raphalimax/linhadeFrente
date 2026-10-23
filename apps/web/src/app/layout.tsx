@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Press_Start_2P, VT323 } from 'next/font/google';
+import { AudioController } from '@/components/AudioController';
 import './globals.css';
 
 // Fontes pixel com licença OFL.
@@ -21,7 +22,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="pt-BR" className={`${pixel.variable} ${body.variable} h-full antialiased`}>
-      <body className="flex min-h-dvh flex-col">{children}</body>
+      <body className="flex min-h-dvh flex-col">
+        <AudioController />
+        {children}
+      </body>
     </html>
   );
 }
