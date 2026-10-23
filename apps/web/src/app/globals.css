@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #1f2a1a;
+  --foreground: #e8e4c9;
+  --grass: #4a6b2f;
+  --grass-alt: #557a36;
+  --lake: #2f5f8a;
+  --army-red: #a33a2c;
+  --army-blue: #2c5aa3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-grass: var(--grass);
+  --color-grass-alt: var(--grass-alt);
+  --color-lake: var(--lake);
+  --color-army-red: var(--army-red);
+  --color-army-blue: var(--army-blue);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: ui-monospace, 'Courier New', monospace;
+}
+
+.pixelated {
+  image-rendering: pixelated;
+}
