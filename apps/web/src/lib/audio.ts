@@ -1,7 +1,7 @@
 'use client';
 
 /**
- * Contexto de áudio compartilhado (efeitos e música).
+ * Contexto de áudio compartilhado pelos efeitos sonoros.
  *
  * Celulares só liberam o áudio dentro de um toque do usuário, e o iPhone
  * silencia Web Audio com a chave de silencioso ligada. Por isso o áudio é

@@ -2,39 +2,22 @@
 
 import { useSettings, useSettingsHydrated } from '@/store/settings';
 
-/** Botões de som (efeitos + vibração) e de música de fundo. */
+/** Liga/desliga os efeitos sonoros (e a vibração). */
 export function MuteButton() {
   const hydrated = useSettingsHydrated();
   const muted = useSettings((s) => s.muted);
-  const music = useSettings((s) => s.music);
-  const toggleMuted = useSettings((s) => s.toggleMuted);
-  const toggleMusic = useSettings((s) => s.toggleMusic);
-
-  const soundLabel = muted ? 'Ligar som' : 'Desligar som';
-  const musicLabel = music ? 'Desligar música' : 'Ligar música';
+  const toggle = useSettings((s) => s.toggleMuted);
+  const label = muted ? 'Ligar som' : 'Desligar som';
   return (
-    <div className="flex gap-1">
-      <button
-        type="button"
-        className="btn px-2 py-0 text-xl"
-        onClick={toggleMuted}
-        aria-label={soundLabel}
-        title={soundLabel}
-        aria-pressed={!muted}
-      >
-        {!hydrated ? '…' : muted ? '🔇' : '🔊'}
-      </button>
-      <button
-        type="button"
-        className={`btn px-2 py-0 text-xl ${hydrated && (!music || muted) ? 'line-through opacity-50' : ''}`}
-        onClick={toggleMusic}
-        disabled={muted}
-        aria-label={musicLabel}
-        title={musicLabel}
-        aria-pressed={music}
-      >
-        ♫
-      </button>
-    </div>
+    <button
+      type="button"
+      className="btn px-2 py-0 text-xl"
+      onClick={toggle}
+      aria-label={label}
+      title={label}
+      aria-pressed={!muted}
+    >
+      {!hydrated ? '…' : muted ? '🔇' : '🔊'}
+    </button>
   );
 }
