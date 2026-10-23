@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   RANKS,
   getLegalMovesForView,
@@ -16,8 +16,11 @@ import {
 import { DIFFICULTIES } from '@ldf/ai';
 import { Board, type BoardCell } from './Board';
 import { PieceTile } from './PieceTile';
+import { CombatOverlay, combatText } from './CombatOverlay';
+import { MuteButton } from './MuteButton';
 import { AI, HUMAN, useGameStore } from '@/store/game';
 import { rankWithStrength, resultText } from '@/lib/text';
+import { sfx } from '@/lib/sound';
 
 const AI_DELAY_MS = 550;
 
@@ -44,24 +47,60 @@ export function GameScreen() {
   }, [legal, selected]);
   const movable = useMemo(() => new Set(legal.map((m) => toIndex(m.from))), [legal]);
 
+  // Animações: só para jogadas novas (não ao recarregar a página).
+  const [seenPly, setSeenPly] = useState(lastRecord?.ply ?? 0);
+  const [pendingCombat, setPendingCombat] = useState<MoveRecord | null>(null);
+  const [slide, setSlide] = useState<{ from: number; to: number; key: number } | null>(null);
+  if (lastRecord && lastRecord.ply > seenPly) {
+    setSeenPly(lastRecord.ply);
+    if (lastRecord.combat) setPendingCombat(lastRecord);
+    else
+      setSlide({ from: toIndex(lastRecord.from), to: toIndex(lastRecord.to), key: lastRecord.ply });
+  }
+  useEffect(() => {
+    if (slide) sfx.move();
+  }, [slide]);
+  const endCombat = useCallback(() => setPendingCombat(null), []);
+
   const turn = view?.turn;
   const phase = view?.phase;
+  const busy = pendingCombat !== null;
   useEffect(() => {
-    if (phase !== 'playing' || turn !== AI) return;
+    if (phase !== 'playing' || turn !== AI || busy) return;
     const t = setTimeout(playAi, AI_DELAY_MS);
     return () => clearTimeout(t);
-  }, [phase, turn, game, playAi]);
+  }, [phase, turn, game, playAi, busy]);
+
+  // Fanfarra no fim (depois da animação do último combate).
+  const endSoundPlayed = useRef(phase === 'finished');
+  const winner = view?.result?.winner;
+  useEffect(() => {
+    if (phase !== 'finished' || busy || endSoundPlayed.current) return;
+    endSoundPlayed.current = true;
+    if (winner === HUMAN) sfx.victory();
+    else sfx.defeat();
+  }, [phase, busy, winner]);
 
   if (!view) return null;
 
+  function play(from: number, to: number) {
+    playHuman({ from: toPos(from), to: toPos(to) });
+    setSelected(null);
+  }
+
   function onCellClick(index: number) {
-    if (!view || view.turn !== HUMAN) return;
+    if (!view || view.turn !== HUMAN || busy) return;
     if (selected !== null && targets.has(index)) {
-      playHuman({ from: toPos(selected), to: toPos(index) });
-      setSelected(null);
+      play(selected, index);
       return;
     }
-    setSelected(movable.has(index) && selected !== index ? index : null);
+    const next = movable.has(index) && selected !== index ? index : null;
+    if (next !== null) sfx.select();
+    setSelected(next);
+  }
+
+  function onDrop(from: number, to: number) {
+    if (legal.some((m) => toIndex(m.from) === from && toIndex(m.to) === to)) play(from, to);
   }
 
   const cells: (BoardCell | null)[] = view.board.map((p) =>
@@ -81,17 +120,24 @@ export function GameScreen() {
           selected={selected}
           targets={targets}
           lastMove={last}
+          slide={slide}
           onCellClick={onCellClick}
+          canDrag={(i) => view.turn === HUMAN && !busy && movable.has(i)}
+          onDrop={onDrop}
         />
-        {view.phase === 'finished' && view.result && (
+        {pendingCombat && <CombatOverlay record={pendingCombat} me={HUMAN} onDone={endCombat} />}
+        {!busy && view.phase === 'finished' && view.result && (
           <ResultOverlay view={view} onAgain={() => newGame(difficulty)} onMenu={quit} />
         )}
       </div>
 
       <aside className="panel">
         <header className="flex items-center justify-between gap-2">
-          <span className="font-pixel text-xs">vs {difficultyLabel}</span>
-          <TurnBadge view={view} />
+          <span className="font-pixel text-xs whitespace-nowrap">vs {difficultyLabel}</span>
+          <div className="flex items-center gap-2">
+            <TurnBadge view={view} />
+            <MuteButton />
+          </div>
         </header>
 
         <CombatBanner record={lastCombat} />
@@ -140,9 +186,9 @@ function TurnBadge({ view }: { view: PlayerView }) {
   const mine = view.turn === HUMAN;
   return (
     <span
-      className={`px-2 text-lg ${mine ? 'animate-pulse bg-yellow-300 text-black' : 'bg-black/40'}`}
+      className={`px-2 text-lg whitespace-nowrap ${mine ? 'animate-pulse bg-yellow-300 text-black' : 'bg-black/40'}`}
     >
-      {mine ? 'Sua vez' : 'Inimigo pensando…'}
+      {mine ? 'Sua vez' : 'Vez da IA…'}
     </span>
   );
 }
@@ -157,16 +203,7 @@ function CombatBanner({ record }: { record: MoveRecord | null }) {
   }
   const { combat, player } = record;
   const defender: Player = opponent(player);
-  const text =
-    combat.defenderRank === 'prisioneiro'
-      ? 'Prisioneiro resgatado!'
-      : combat.outcome === 'both_removed'
-        ? 'As duas peças saem.'
-        : combat.outcome === 'attacker_wins'
-          ? combat.defenderRank === 'mina'
-            ? 'Mina desativada!'
-            : `${rankWithStrength(combat.attackerRank)} vence.`
-          : `${rankWithStrength(combat.defenderRank)} vence.`;
+  const text = combatText(record);
   return (
     <div className="flex h-20 items-center gap-3 border-2 border-black/40 bg-black/30 px-2">
       <div className="h-12 w-12 shrink-0">

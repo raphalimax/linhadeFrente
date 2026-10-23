@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { DIFFICULTIES, type Difficulty } from '@ldf/ai';
 import { useGameStore, useStoreHydrated } from '@/store/game';
+import { MuteButton } from './MuteButton';
 
 const DESCRIPTIONS: Record<Difficulty, string> = {
   recruta: 'Fácil — joga quase ao acaso.',
@@ -26,6 +27,10 @@ export function MenuScreen() {
       <h1 className="text-center font-pixel text-2xl leading-relaxed text-yellow-200 [text-shadow:3px_3px_0_#000]">
         Linha de Frente
       </h1>
+
+      <div className="flex justify-center">
+        <MuteButton />
+      </div>
 
       {hydrated && inProgress && (
         <button type="button" className="btn btn-primary" onClick={() => router.push('/jogo')}>

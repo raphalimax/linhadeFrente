@@ -85,6 +85,11 @@ export function SetupScreen() {
           zone={ZONE}
           selected={selectedCell}
           onCellClick={onCellClick}
+          canDrag={(i) => draft[i] !== undefined}
+          onDrop={(from, to) => {
+            setDraft(movePlaced(draft, HUMAN, from, to));
+            setSelectedCell(null);
+          }}
         />
       </div>
 
